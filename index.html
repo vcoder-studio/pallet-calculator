@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pallet Calculator – How Many Boxes Fit on a Pallet (Ti × Hi)</title>
+  <meta name="description" content="Free pallet calculator: enter box and pallet size to get boxes per layer, layers (Ti × Hi), total boxes, weight and a top-view layout. Works in your browser, nothing is uploaded.">
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="style.css">
+  <meta property="og:title" content="Pallet Calculator – How Many Boxes Fit on a Pallet">
+  <meta property="og:description" content="Boxes per layer, layers (Ti × Hi), total boxes and weight in one step. Free, no upload.">
+  <meta property="og:image" content="icon.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Pallet Calculator",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Chrome, Microsoft Edge",
+    "description": "Calculates how many boxes fit on a pallet: boxes per layer, number of layers (Ti × Hi), total boxes, load weight and height, with a top-view layer layout.",
+    "offers": [
+      { "@type": "Offer", "price": "0", "priceCurrency": "USD", "description": "Free calculator" },
+      { "@type": "Offer", "price": "9", "priceCurrency": "USD", "description": "PRO: mixed pattern, saved boxes, load sheet, CSV export, container estimate (one-time payment)" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "How do I calculate how many boxes fit on a pallet?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Divide the pallet length by the box length and the pallet width by the box width, round both down and multiply them to get boxes per layer; try the box turned 90° too and keep the larger number. Then divide the allowed load height (max height minus pallet height) by the box height and round down to get the number of layers. Boxes per layer × layers = total boxes." } },
+      { "@type": "Question", "name": "What does Ti × Hi mean?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Ti is the number of boxes in one layer (tier) of the pallet, Hi is how many layers high the boxes are stacked. Ti × Hi is the total number of boxes on the pallet." } },
+      { "@type": "Question", "name": "Does the max height include the pallet?",
+        "acceptedAnswer": { "@type": "Answer", "text": "In this calculator, yes. Enter the pallet height separately; it is subtracted from the max height before layers are counted, and the load height result includes the pallet." } },
+      { "@type": "Question", "name": "What happens if the boxes are too heavy?",
+        "acceptedAnswer": { "@type": "Answer", "text": "If you enter the box weight and a max load weight, the calculator caps the total at the number of boxes the weight limit allows and shows how many would fit by height alone." } },
+      { "@type": "Question", "name": "Is the pallet calculator free? Does it upload my data?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The calculator on this page and the basic Chrome extension are free. All calculations run in your browser; your sizes and weights are not sent anywhere." } }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="site-head">
+    <div class="wrap head-row">
+      <a class="brand" href="#top"><img src="icon.png" alt="" width="32" height="32"> Pallet Calculator</a>
+      <nav>
+        <a href="#how">How it works</a>
+        <a href="#faq">FAQ</a>
+        <a class="btn btn-primary store-link" href="#install">Add to Chrome</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero wrap">
+      <h1>Pallet Calculator: how many boxes fit on a pallet</h1>
+      <p class="lead">Enter your box and pallet size to get <strong>boxes per layer, number of layers (Ti × Hi), total boxes, load weight and height</strong>, plus a top-view layout of one layer. Free, works in your browser, nothing is uploaded.</p>
+    </section>
+
+    <section class="wrap calc" aria-label="Pallet calculator">
+      <div class="panel inputs">
+        <div class="row-between">
+          <h2>Your box and pallet</h2>
+          <div class="seg" id="unitSeg" role="group" aria-label="Units">
+            <button type="button" data-unit="imperial">in / lb</button>
+            <button type="button" data-unit="metric">cm / kg</button>
+          </div>
+        </div>
+        <h3>Box</h3>
+        <div class="grid3">
+          <label>Length <small class="u-len"></small><input id="boxL" type="number" inputmode="decimal" min="0" step="any"></label>
+          <label>Width <small class="u-len"></small><input id="boxW" type="number" inputmode="decimal" min="0" step="any"></label>
+          <label>Height <small class="u-len"></small><input id="boxH" type="number" inputmode="decimal" min="0" step="any"></label>
+        </div>
+        <label>Box weight (optional) <small class="u-wt"></small><input id="boxWt" type="number" inputmode="decimal" min="0" step="any"></label>
+        <h3>Pallet</h3>
+        <label>Pallet size
+          <select id="preset">
+            <option value="us">48 × 40 in (US standard)</option>
+            <option value="eur">1200 × 800 mm (EUR pallet)</option>
+            <option value="iso">1200 × 1000 mm</option>
+            <option value="custom">Custom size</option>
+          </select>
+        </label>
+        <div class="grid2" id="customPallet" hidden>
+          <label>Pallet length <small class="u-len"></small><input id="palL" type="number" inputmode="decimal" min="0" step="any"></label>
+          <label>Pallet width <small class="u-len"></small><input id="palW" type="number" inputmode="decimal" min="0" step="any"></label>
+        </div>
+        <div class="grid2">
+          <label>Pallet height <small class="u-len"></small><input id="palH" type="number" inputmode="decimal" min="0" step="any"></label>
+          <label>Max height incl. pallet <small class="u-len"></small><input id="maxH" type="number" inputmode="decimal" min="0" step="any"></label>
+        </div>
+        <label>Max load weight (optional) <small class="u-wt"></small><input id="maxWt" type="number" inputmode="decimal" min="0" step="any"></label>
+      </div>
+
+      <div class="panel results" aria-live="polite">
+        <h2>Result</h2>
+        <div id="error" class="error" hidden></div>
+        <div id="resultBody">
+          <div class="tihi"><span>Ti × Hi</span><strong id="rTiHi"></strong></div>
+          <div id="diagram" role="img" aria-label="Top view of one layer"></div>
+          <p class="muted" id="diagramCaption"></p>
+          <dl class="metrics">
+            <div><dt>Boxes per layer (Ti)</dt><dd id="rPerLayer"></dd></div>
+            <div><dt>Layers (Hi)</dt><dd id="rLayers"></dd></div>
+            <div><dt>Total boxes</dt><dd id="rTotal"></dd></div>
+            <div id="mWeight"><dt>Total load weight</dt><dd id="rWeight"></dd></div>
+            <div><dt>Load height incl. pallet</dt><dd id="rHeight"></dd></div>
+            <div><dt>Pallet area used</dt><dd id="rArea"></dd></div>
+          </dl>
+          <div id="notes" class="notes"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap install" id="install">
+      <div class="panel cta">
+        <img src="icon.png" alt="" width="56" height="56">
+        <div>
+          <h2>Use it every day? Keep it in your browser toolbar</h2>
+          <p>The free Chrome extension does the same calculation in one click, remembers your last pallet and works offline. PRO ($9 one-time) adds a mixed pattern that often fits more boxes, saved box sizes, a printable load sheet, CSV export and a pallets-per-container estimate.</p>
+        </div>
+        <a class="btn btn-primary store-link" href="#install">Add to Chrome — free</a>
+      </div>
+    </section>
+
+    <section class="wrap prose" id="how">
+      <h2>How to calculate how many boxes fit on a pallet</h2>
+      <p>You can do it by hand in four steps. The calculator above does exactly this.</p>
+      <ol>
+        <li><strong>Boxes per layer (Ti).</strong> Divide the pallet length by the box length and the pallet width by the box width. Round both down and multiply. Then turn the box 90° and repeat; keep the larger number.</li>
+        <li><strong>Number of layers (Hi).</strong> Subtract the pallet height from the max height allowed, divide by the box height and round down.</li>
+        <li><strong>Total boxes.</strong> Multiply Ti × Hi.</li>
+        <li><strong>Check the weight.</strong> Multiply the total by the box weight. If it is above the max load weight, the weight limit decides: divide the max load weight by the box weight and round down.</li>
+      </ol>
+      <h3>Example</h3>
+      <p>A 12 × 10 × 8 in box on a 48 × 40 in pallet (5.5 in tall) with a 96 in height limit: 48 ÷ 12 = 4 and 40 ÷ 10 = 4, so <strong>16 boxes per layer</strong>. (96 − 5.5) ÷ 8 = 11.3, so <strong>11 layers</strong>. Total: <strong>16 × 11 = 176 boxes</strong>, load height 93.5 in. If each box weighs 15 lb and the pallet may carry 2,000 lb, the weight limit allows 133 boxes (9 layers, the top one partial).</p>
+      <h3>Common pallet sizes</h3>
+      <table>
+        <thead><tr><th>Pallet</th><th>Size</th></tr></thead>
+        <tbody>
+          <tr><td>US standard</td><td>48 × 40 in (1219 × 1016 mm)</td></tr>
+          <tr><td>EUR pallet</td><td>1200 × 800 mm (47.2 × 31.5 in)</td></tr>
+          <tr><td>1200 × 1000 mm</td><td>47.2 × 39.4 in</td></tr>
+        </tbody>
+      </table>
+      <h3>Why rotate some boxes?</h3>
+      <p>When the box does not divide the pallet evenly, turning part of the layer 90° can fill the leftover strip. This is called a mixed (or block) pattern. The calculator above shows how many extra boxes per layer a mixed pattern would add; the PRO extension draws the pattern.</p>
+    </section>
+
+    <section class="wrap prose" id="faq">
+      <h2>FAQ</h2>
+      <details open><summary>How do I calculate how many boxes fit on a pallet?</summary>
+        <p>Boxes per layer × number of layers. Boxes per layer = (pallet length ÷ box length, rounded down) × (pallet width ÷ box width, rounded down), checking both box orientations. Layers = (max height − pallet height) ÷ box height, rounded down.</p></details>
+      <details><summary>What does Ti × Hi mean?</summary>
+        <p>Ti is the number of boxes in one layer (tier); Hi is how many layers high they are stacked. Ti × Hi is the total number of boxes on the pallet.</p></details>
+      <details><summary>Does the max height include the pallet?</summary>
+        <p>Yes, in this calculator. Enter the pallet height separately: it is subtracted before layers are counted, and the load height result includes the pallet.</p></details>
+      <details><summary>What if my boxes are heavy?</summary>
+        <p>Enter the box weight and the max load weight. The calculator then caps the total at what the weight limit allows and tells you how many would fit by height alone.</p></details>
+      <details><summary>Is it free? Do you upload my data?</summary>
+        <p>The calculator on this page and the basic Chrome extension are free. Everything is calculated in your browser; your sizes and weights are not sent anywhere.</p></details>
+      <details><summary>Can I use it in Microsoft Edge?</summary>
+        <p>The calculator on this page works in any modern browser. The extension is built for Chrome and Edge.</p></details>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap foot-row">
+      <span>Pallet Calculator</span>
+      <a href="privacy.html">Privacy policy</a>
+      <a href="mailto:client.care@tutamail.com?subject=Pallet%20Calculator">Contact</a>
+    </div>
+  </footer>
+
+  <script src="calc.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

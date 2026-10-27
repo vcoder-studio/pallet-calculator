@@ -1,7 +1,7 @@
 // app.js - free web version of Pallet Calculator (same calc.js as the extension, no server, no tracking).
 (() => {
-  // 🔴 УТОЧНИТЬ: Chrome Web Store page of the extension. Fill in before publishing the site.
-  const STORE_URL = '';
+  // Chrome Web Store page of the extension (utm_source=site shows in the store's stats which visitors came from this page).
+  const STORE_URL = 'https://chromewebstore.google.com/detail/hcdkooadnpidfjlgicklgibnfelieehg?utm_source=site';
 
   const C = window.PalletCalc;
   const $ = id => document.getElementById(id);
